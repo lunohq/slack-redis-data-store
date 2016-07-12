@@ -402,6 +402,11 @@ class SlackRedisDataStore extends SlackDataStore {
     await this.setUser(user)
   }
 
+  getChannelOrGroupByName = async (name) => {
+    const channel = await this.getChannelByName(name)
+    return channel || this.getGroupByName(name)
+  }
+
 }
 
 export default SlackRedisDataStore
