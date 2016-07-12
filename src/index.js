@@ -252,7 +252,7 @@ class SlackRedisDataStore extends SlackDataStore {
     return this.setChannel(instance, multi)
   }
 
-  uspertGroup = async (group) => {
+  upsertGroup = async (group) => {
     let multi
     let instance
     const prev = await this.getGroupById(group.id)
