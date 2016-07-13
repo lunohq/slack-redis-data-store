@@ -15,21 +15,25 @@ class SlackRedisDataStore extends SlackDataStore {
   constructor(opts) {
     const dataStoreOpts = opts || {}
     super(dataStoreOpts)
-    this.userKeyName = dataStoreOpts.userKeyName || 'user'
-    this.userByNameKeyName = dataStoreOpts.userByNameKeyName || 'user.name'
-    this.userByEmailKeyName = dataStoreOpts.userByEmailKeyName || 'user.email'
-    this.userByBotIdKeyName = dataStoreOpts.userByBotIdKeyName || 'user.botId'
-    this.channelKeyName = dataStoreOpts.channelKeyName || 'channel'
-    this.channelByNameKeyName = dataStoreOpts.channelByNameKeyName || 'channel.name'
-    this.dmKeyName = dataStoreOpts.dmKeyName || 'dm'
-    this.dmByUserIdKeyName = dataStoreOpts.dmByUserIdKeyName || 'dm.userId'
-    this.groupKeyName = dataStoreOpts.groupKeyName || 'group'
-    this.groupByNameKeyName = dataStoreOpts.groupByNameKeyName || 'group.name'
-    this.botKeyName = dataStoreOpts.botKeyName || 'bot'
-    this.botByNameKeyName = dataStoreOpts.botByNameKeyName || 'bot.name'
-    this.teamKeyName = dataStoreOpts.teamKeyName || 'team'
-
+    this.keyPrefix = dataStoreOpts.keyPrefix || ''
+    this.userKeyName = this.fullKeyName(dataStoreOpts.userKeyName || 'user')
+    this.userByNameKeyName = this.fullKeyName(dataStoreOpts.userByNameKeyName || 'user.name')
+    this.userByEmailKeyName = this.fullKeyName(dataStoreOpts.userByEmailKeyName || 'user.email')
+    this.userByBotIdKeyName = this.fullKeyName(dataStoreOpts.userByBotIdKeyName || 'user.botId')
+    this.channelKeyName = this.fullKeyName(dataStoreOpts.channelKeyName || 'channel')
+    this.channelByNameKeyName = this.fullKeyName(dataStoreOpts.channelByNameKeyName || 'channel.name')
+    this.dmKeyName = this.fullKeyName(dataStoreOpts.dmKeyName || 'dm')
+    this.dmByUserIdKeyName = this.fullKeyName(dataStoreOpts.dmByUserIdKeyName || 'dm.userId')
+    this.groupKeyName = this.fullKeyName(dataStoreOpts.groupKeyName || 'group')
+    this.groupByNameKeyName = this.fullKeyName(dataStoreOpts.groupByNameKeyName || 'group.name')
+    this.botKeyName = this.fullKeyName(dataStoreOpts.botKeyName || 'bot')
+    this.botByNameKeyName = this.fullKeyName(dataStoreOpts.botByNameKeyName || 'bot.name')
+    this.teamKeyName = this.fullKeyName(dataStoreOpts.teamKeyName || 'team')
     this.client = redis.createClient(dataStoreOpts.redisOpts || {})
+  }
+
+  fullKeyName(name) {
+    return `${this.keyPrefix}${name}`
   }
 
   serialize(obj) {
