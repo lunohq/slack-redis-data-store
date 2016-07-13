@@ -381,8 +381,14 @@ class SlackRedisDataStore extends SlackDataStore {
 
   cacheRtmStart = async (data) => {
     await this.clear()
-    const promises = []
+    await this.cacheData(data)
+    const user = await this.getUserById(data.self.id)
+    user.update(data.self)
+    await this.setUser(user)
+  }
 
+  cacheData = async (data) => {
+    const promises = []
     forEach(data.users || [], user => {
       promises.push(this.setUser(new models.User(user)))
     })
@@ -399,11 +405,7 @@ class SlackRedisDataStore extends SlackDataStore {
       promises.push(this.setBot(bot))
     })
     promises.push(this.setTeam(data.team))
-
-    await Promise.all(promises)
-    const user = await this.getUserById(data.self.id)
-    user.update(data.self)
-    await this.setUser(user)
+    return Promise.all(promises)
   }
 
   getChannelOrGroupByName = async (name) => {
