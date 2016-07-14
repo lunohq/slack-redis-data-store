@@ -195,6 +195,12 @@ class SlackRedisDataStore extends SlackDataStore {
   }
 
   setChannel(channel, multi = this.client.multi()) {
+    if (!channel.id) {
+      console.log('no channel id', channel)
+    }
+    if (!channel.name) {
+      console.log('no channel name', channel)
+    }
     return multi
       .hset(this.channelKeyName, channel.id, this.serialize(channel))
       .hset(this.channelByNameKeyName, channel.name, channel.id)
@@ -202,6 +208,12 @@ class SlackRedisDataStore extends SlackDataStore {
   }
 
   setGroup(group, multi = this.client.multi()) {
+    if (!group.id) {
+      console.log('no group id', group)
+    }
+    if (!group.name) {
+      console.log('no group name', group)
+    }
     return multi
       .hset(this.groupKeyName, group.id, this.serialize(group))
       .hset(this.groupByNameKeyName, group.name, group.id)
@@ -209,6 +221,12 @@ class SlackRedisDataStore extends SlackDataStore {
   }
 
   setDM(dm, multi = this.client.multi()) {
+    if (!dm.id) {
+      console.log('no dm id', dm)
+    }
+    if (!dm.user) {
+      console.log('no dm name', dm)
+    }
     return multi
       .hset(this.dmKeyName, dm.id, this.serialize(dm))
       .hset(this.dmByUserIdKeyName, dm.user, dm.id)
@@ -220,16 +238,34 @@ class SlackRedisDataStore extends SlackDataStore {
       .hset(this.userKeyName, user.id, this.serialize(user))
       .hset(this.userByNameKeyName, user.name, user.id)
 
+    if (!user.id) {
+      console.log('no user id', user)
+    }
+    if (!user.name) {
+      console.log('no user name', user)
+    }
     if (user.profile.bot_id) {
+      if (!user.profile.botid) {
+        console.log('no bot id', user)
+      }
       multi = multi.hset(this.userByBotIdKeyName, user.profile.bot_id, user.id)
     }
     if (user.profile.email) {
+      if (!user.profile.email) {
+        console.log('no email', user)
+      }
       multi = multi.hset(this.userByEmailKeyName, user.profile.email, user.id)
     }
     return multi.execAsync()
   }
 
   setBot(bot, multi = this.client.multi()) {
+    if (!bot.id) {
+      console.log('no bot id', bot)
+    }
+    if (!bot.name) {
+      console.log('no bot name', bot)
+    }
     return multi
       .hset(this.botKeyName, bot.id, this.serialize(bot))
       .hset(this.botByNameKeyName, bot.name, bot.id)
@@ -237,6 +273,9 @@ class SlackRedisDataStore extends SlackDataStore {
   }
 
   setTeam(team, multi = this.client.multi()) {
+    if (!team.id) {
+      console.log('no team id', team)
+    }
     return multi
       .hset(this.teamKeyName, team.id, this.serialize(team))
       .execAsync()
