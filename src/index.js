@@ -245,7 +245,7 @@ class SlackRedisDataStore extends SlackDataStore {
       console.log('no user name', user)
     }
     if (user.profile.bot_id) {
-      if (!user.profile.botid) {
+      if (!user.profile.bot_id) {
         console.log('no bot id', user)
       }
       multi = multi.hset(this.userByBotIdKeyName, user.profile.bot_id, user.id)
