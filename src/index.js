@@ -229,11 +229,13 @@ class SlackRedisDataStore extends SlackDataStore {
     return multi.execAsync()
   }
 
-  setBot(bot, multi = this.client.multi()) {
-    return multi
+  setBot(bot, m = this.client.multi()) {
+    let multi = m
       .hset(this.botKeyName, bot.id, this.serialize(bot))
-      .hset(this.botByNameKeyName, bot.name, bot.id)
-      .execAsync()
+    if (bot.name) {
+      multi = multi.hset(this.botByNameKeyName, bot.name, bot.id)
+    }
+    return multi.execAsync()
   }
 
   setTeam(team, multi = this.client.multi()) {
