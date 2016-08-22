@@ -13,7 +13,14 @@ bluebird.promisifyAll(redis.Multi.prototype)
 function validateArgs(message, ...args) {
   args.forEach(arg => {
     if (typeof arg === 'object') {
-      console.log(`Invalid arguments: ${message}, ${arg}`)
+      let payload
+      try {
+        payload = JSON.stringify(arg)
+      } catch (err) {
+        payload = arg
+      }
+      const err = new Error(`Invalid arguments: ${message}, ${payload}`)
+      console.error(err)
     }
   })
 }
