@@ -10,6 +10,14 @@ import redis from 'redis'
 bluebird.promisifyAll(redis.RedisClient.prototype)
 bluebird.promisifyAll(redis.Multi.prototype)
 
+function validateArgs(message, ...args) {
+  args.forEach(arg => {
+    if (typeof arg === 'object') {
+      console.log(`Invalid arguments: ${message}, ${arg}`)
+    }
+  })
+}
+
 class SlackRedisDataStore extends SlackDataStore {
 
   constructor(opts) {
@@ -72,6 +80,7 @@ class SlackRedisDataStore extends SlackDataStore {
     }
 
     let user
+    validateArgs('getUserByid', this.userKeyName, userId)
     const data = await this.client.hgetAsync(this.userKeyName, userId)
     if (data) {
       user = this.deserializeToModel(models.User, data)
@@ -80,16 +89,19 @@ class SlackRedisDataStore extends SlackDataStore {
   }
 
   getUserByName = async (name) => {
+    validateArgs('getUserByName', this.userByNameKeyName, name)
     const userId = await this.client.hgetAsync(this.userByNameKeyName, name)
     return this.getUserById(userId)
   }
 
   getUserByEmail = async (email) => {
+    validateArgs('getUserByEmail', this.userByEmailKeyName, email)
     const userId = await this.client.hgetAsync(this.userByEmailKeyName, email)
     return this.getUserById(userId)
   }
 
   getUserByBotId = async (botId) => {
+    validateArgs('getUserByBotId', this.userByBotIdKeyName, botId)
     const userId = await this.client.hgetAsync(this.userByBotIdKeyName, botId)
     return this.getUserById(userId)
   }
@@ -100,6 +112,7 @@ class SlackRedisDataStore extends SlackDataStore {
     }
 
     let channel
+    validateArgs('getChannelById', this.channelKeyName, channelId)
     const data = await this.client.hgetAsync(this.channelKeyName, channelId)
     if (data) {
       channel = this.deserializeToModel(models.Channel, data)
@@ -109,7 +122,9 @@ class SlackRedisDataStore extends SlackDataStore {
 
   getChannelByName = async (name) => {
     const transformedName = name.replace(/^#/, '')
+    validateArgs('getChannelByName', this.channelByNameKeyName, transformedName)
     const channelId = await this.client.hgetAsync(this.channelByNameKeyName, transformedName)
+    validateArgs('getChannelByNameInner', channelId)
     return this.getChannelById(channelId)
   }
 
@@ -119,6 +134,7 @@ class SlackRedisDataStore extends SlackDataStore {
     }
 
     let group
+    validateArgs('getGroupById', this.groupKeyName, groupId)
     const data = await this.client.hgetAsync(this.groupKeyName, groupId)
     if (data) {
       group = this.deserializeToModel(models.Group, data)
@@ -127,6 +143,7 @@ class SlackRedisDataStore extends SlackDataStore {
   }
 
   getGroupByName = async (name) => {
+    validateArgs('getGroupByName', this.groupByNameKeyName, name)
     const groupId = await this.client.hgetAsync(this.groupByNameKeyName, name)
     return this.getGroupById(groupId)
   }
@@ -137,6 +154,7 @@ class SlackRedisDataStore extends SlackDataStore {
     }
 
     let dm
+    validateArgs('getDMById', this.dmKeyName, dmId)
     const data = await this.client.hgetAsync(this.dmKeyName, dmId)
     if (data) {
       dm = this.deserializeToModel(models.DM, data)
@@ -145,11 +163,13 @@ class SlackRedisDataStore extends SlackDataStore {
   }
 
   getDMByUserId = async (userId) => {
+    validateArgs('getDMByUserId', this.dmByUserIdKeyName, userId)
     const dmId = await this.client.hgetAsync(this.dmByUserIdKeyName, userId)
     return this.getDMById(dmId)
   }
 
   getDMByName = async (name) => {
+    validateArgs('getDMByName', this.userByNameKeyName, name)
     const userId = await this.client.hgetAsync(this.userByNameKeyName, name)
     return this.getDMByUserId(userId)
   }
@@ -160,6 +180,7 @@ class SlackRedisDataStore extends SlackDataStore {
     }
 
     let bot
+    validateArgs('getBotById', this.botKeyName, botId)
     const data = await this.client.hgetAsync(this.botKeyName, botId)
     if (data) {
       bot = this.deserialize(data)
@@ -168,6 +189,7 @@ class SlackRedisDataStore extends SlackDataStore {
   }
 
   getBotByName = async (name) => {
+    validateArgs('getBotByName', this.botByNameKeyName, name)
     const botId = await this.client.hgetAsync(this.botByNameKeyName, name)
     return this.getBotById(botId)
   }
@@ -187,6 +209,7 @@ class SlackRedisDataStore extends SlackDataStore {
     }
 
     let team
+    validateArgs('getTeamById', this.teamKeyName, teamId)
     const data = await this.client.hgetAsync(this.teamKeyName, teamId)
     if (data) {
       team = this.deserialize(data)
